@@ -2,11 +2,12 @@ import productModel from "../models/productModel.js";
 import { v2 as cloudinary } from "cloudinary";
 
 // --- ADD PRODUCT ---
+
 const addProduct = async (req, res) => {
     try {
-        // Change 'bestseller' to 'bestSeller' here to match your model
         const { name, description, price, category, subCategory, sizes, bestSeller } = req.body;
-        console.log("Full Body:", req.body);
+
+        // 1. Extract Images from req.files
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
         const image3 = req.files.image3 && req.files.image3[0];
@@ -14,6 +15,7 @@ const addProduct = async (req, res) => {
 
         const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
 
+        // 2. Upload Images to Cloudinary (if using Cloudinary)
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
                 let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
@@ -21,18 +23,21 @@ const addProduct = async (req, res) => {
             })
         );
 
-        const productData = {
-            name,
-            description,
-            category,
-            price: Number(price),
-            subCategory,
-            // Match this to your Mongoose Schema field name
-            bestSeller: bestSeller === "true" ? true : false,
-            sizes: JSON.parse(sizes),
-            image: imagesUrl,
-            date: Date.now()
-        };
+        // 3. Prepare Product Data
+    // productController.js - Inside addProduct
+const productData = {
+    name,
+    description,
+    category,
+    price: Number(price),
+    subCategory,
+    bestSeller: bestSeller === "true" ? true : false,
+    size: JSON.parse(sizes),   // Renamed from 'sizes' to 'size' to match Model
+    images: imagesUrl,         // Renamed from 'image' to 'images' to match Model
+    date: Date.now()
+};
+
+        console.log("Saving to DB:", productData);
 
         const product = new productModel(productData);
         await product.save();
@@ -43,7 +48,7 @@ const addProduct = async (req, res) => {
         console.log(error);
         res.status(500).json({ success: false, message: error.message });
     }
-};
+}
 // --- LIST PRODUCTS ---
 const listProducts = async (req, res) => {
     try {

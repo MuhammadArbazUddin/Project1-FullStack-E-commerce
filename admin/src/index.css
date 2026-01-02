@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Prata&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+
+:root {
+  font-family: 'Outfit', sans-serif;
+}
+
+.prata-regular {
+  font-family: "Prata", serif;
+}
