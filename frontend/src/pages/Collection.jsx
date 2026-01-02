@@ -5,15 +5,13 @@ import Title from '../components/Title';
 import ProductItem from '../components/ProductItem';
 
 const Collection = () => {
-  const { products } = useContext(ShopContext);
+  const { products, search, showSearch } = useContext(ShopContext); // Added search states
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState('relevant');
 
-  
-  // Toggle Category
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory(prev => prev.filter(item => item !== e.target.value))
@@ -22,7 +20,6 @@ const Collection = () => {
     }
   }
 
-  // Toggle SubCategory
   const toggleSubCategory = (e) => {
     if (subCategory.includes(e.target.value)) {
       setSubCategory(prev => prev.filter(item => item !== e.target.value))
@@ -31,14 +28,20 @@ const Collection = () => {
     }
   }
 
-  // Apply Filter Logic
   const applyFilter = () => {
     let productsCopy = products.slice();
 
+    // Search Filter Logic
+    if (showSearch && search) {
+      productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+    }
+
+    // Category Filter
     if (category.length > 0) {
       productsCopy = productsCopy.filter(item => category.includes(item.category));
     }
 
+    // SubCategory Filter
     if (subCategory.length > 0) {
       productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
     }
@@ -46,9 +49,8 @@ const Collection = () => {
     setFilterProducts(productsCopy)
   }
 
-  // Sort Logic
   const sortProduct = () => {
-    let fpCopy = filterProducts.slice();
+    let fpCopy = [...filterProducts]; // Use spread operator for a clean copy
 
     switch (sortType) {
       case 'low-high':
@@ -63,9 +65,10 @@ const Collection = () => {
     }
   }
 
+  // Combine useEffect dependencies for efficiency
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory, products])
+  }, [category, subCategory, products, search, showSearch])
 
   useEffect(() => {
     sortProduct();
@@ -105,7 +108,6 @@ const Collection = () => {
       <div className='flex-1'>
         <div className='flex justify-between text-base sm:text-2xl mb-4'>
           <Title text1={'ALL'} text2={'COLLECTIONS'} />
-          {/* Product Sort */}
           <select onChange={(e) => setSortType(e.target.value)} className='border-2 border-gray-300 text-sm px-2'>
             <option value="relevant">Sort by: Relevant</option>
             <option value="low-high">Sort by: Low to High</option>
@@ -116,7 +118,13 @@ const Collection = () => {
         {/* Map Products */}
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
           {filterProducts.map((item, index) => (
-            <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.image} />
+            <ProductItem 
+              key={index} 
+              name={item.name} 
+              id={item._id} 
+              price={item.price} 
+              image={item.images} // CHANGED: item.image to item.images
+            />
           ))}
         </div>
       </div>

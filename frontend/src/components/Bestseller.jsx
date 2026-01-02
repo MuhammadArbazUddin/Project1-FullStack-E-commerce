@@ -8,13 +8,10 @@ const Bestseller = () => {
     const [bestseller, setBestseller] = useState([]);
 
     useEffect(() => {
-        // 1. Filter products where bestseller property is true
-        // 2. Slice the array to only get the first 5
-        const bestProduct = products.filter((item) => (item.bestseller));
+        // FIX 1: Change 'bestseller' to 'bestSeller' to match your DB/Model
+        const bestProduct = products.filter((item) => (item.bestSeller)); 
         setBestseller(bestProduct.slice(0, 5));
     }, [products])
-
-    
 
     return (
         <div className='my-10'>
@@ -31,7 +28,8 @@ const Bestseller = () => {
                         <ProductItem 
                             key={index} 
                             id={item._id} 
-                            image={item.image} 
+                            // FIX 2: Change item.image to item.images to match your DB
+                            image={item.images} 
                             name={item.name} 
                             price={item.price} 
                         />

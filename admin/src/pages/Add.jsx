@@ -90,16 +90,16 @@ const Add = ({ token }) => {
 
       <div className='w-full'>
         <p className='mb-2 font-medium'>Product name</p>
-        <input onChange={(e) => setName(e.target.value)} value={name} className='w-full max-w-[500px] px-3 py-2 border rounded' type="text" placeholder='Type here' required />
+        <input onChange={(e) => setName(e.target.value)} value={name} className='w-full max-w-125 px-3 py-2 border rounded' type="text" placeholder='Type here' required />
       </div>
 
       <div className='w-full'>
         <p className='mb-2 font-medium'>Product description</p>
-        <textarea onChange={(e) => setDescription(e.target.value)} value={description} className='w-full max-w-[500px] px-3 py-2 border rounded' placeholder='Write content here' required />
+        <textarea onChange={(e) => setDescription(e.target.value)} value={description} className='w-full max-w-125 px-3 py-2 border rounded' placeholder='Write content here' required />
       </div>
 
       <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
-        <div className='flex-1 max-w-[500px]'>
+        <div className='flex-1 max-w-125'>
           <p className='mb-2 font-medium'>Category</p>
           <select onChange={(e) => setCategory(e.target.value)} className='w-full px-3 py-2 border rounded'>
             <option value="Men">Men</option>
@@ -107,7 +107,7 @@ const Add = ({ token }) => {
             <option value="Kids">Kids</option>
           </select>
         </div>
-        <div className='flex-1 max-w-[500px]'>
+        <div className='flex-1 max-w-125'>
           <p className='mb-2 font-medium'>Sub Category</p>
           <select onChange={(e) => setSubCategory(e.target.value)} className='w-full px-3 py-2 border rounded'>
             <option value="Topwear">Topwear</option>
@@ -115,9 +115,9 @@ const Add = ({ token }) => {
             <option value="Winterwear">Winterwear</option>
           </select>
         </div>
-        <div className='flex-1 max-w-[500px]'>
+        <div className='flex-1 max-w-125'>
           <p className='mb-2 font-medium'>Price</p>
-          <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full px-3 py-2 border rounded sm:w-[120px]' type="Number" placeholder='25' required />
+          <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full px-3 py-2 border rounded sm:w-30' type="Number" placeholder='25' required />
         </div>
       </div>
 

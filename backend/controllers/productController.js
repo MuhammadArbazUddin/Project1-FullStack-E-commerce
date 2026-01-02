@@ -37,7 +37,6 @@ const productData = {
     date: Date.now()
 };
 
-        console.log("Saving to DB:", productData);
 
         const product = new productModel(productData);
         await product.save();
