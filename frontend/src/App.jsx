@@ -11,6 +11,7 @@ import Order from "./pages/Order"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import { ToastContainer } from "react-toastify"
+import Verify from "./pages/Verify"
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/place-order' element={<PlaceOrder />} />
       <Route path='/orders' element={<Order />} />
+      <Route path='/verify' element={<Verify />} />
     </Routes>
     <Footer/>
     </div>

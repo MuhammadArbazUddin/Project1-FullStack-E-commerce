@@ -29,35 +29,35 @@ const PlaceOrder = () => {
         setFormData(data => ({ ...data, [name]: value }));
     }
 
-    const onSubmitHandler = async (event) => {
-        event.preventDefault();
-        try {
-            let orderItems = [];
+   const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    try {
+        let orderItems = [];
 
-            // Prepare items array for the backend
-            for (const items in cartItems) {
-                for (const item in cartItems[items]) {
-                    if (cartItems[items][item] > 0) {
-                        const itemInfo = structuredClone(products.find(product => product._id === items));
-                        if (itemInfo) {
-                            itemInfo.size = item;
-                            itemInfo.quantity = cartItems[items][item];
-                            orderItems.push(itemInfo);
-                        }
+        // Convert the cartItems object into a flat array for the backend
+        for (const items in cartItems) {
+            for (const item in cartItems[items]) {
+                if (cartItems[items][item] > 0) {
+                    const itemInfo = structuredClone(products.find(product => product._id === items));
+                    if (itemInfo) {
+                        itemInfo.size = item;
+                        itemInfo.quantity = cartItems[items][item];
+                        orderItems.push(itemInfo);
                     }
                 }
             }
+        }
 
-            let orderData = {
-                address: formData,
-                items: orderItems,
-                amount: getCartAmount() + delivery_fee
-            }
+        let orderData = {
+            address: formData,
+            items: orderItems,
+            amount: getCartAmount() + delivery_fee
+        }
 
-            // --- COD LOGIC ---
-            if (method === 'cod') {
+        // --- Handle different payment methods ---
+        switch (method) {
+            case 'cod':
                 const response = await axios.post(backendUrl + '/api/order/place', orderData, { headers: { token } });
-                
                 if (response.data.success) {
                     setCartItems({});
                     navigate('/orders');
@@ -65,15 +65,33 @@ const PlaceOrder = () => {
                 } else {
                     toast.error(response.data.message);
                 }
-            } else {
-                toast.info("Online payment methods coming soon!");
-            }
+                break;
 
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message);
+            case 'stripe':
+                const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, { headers: { token } });
+                if (responseStripe.data.success) {
+                    const { session_url } = responseStripe.data;
+                    // Send user to Stripe's secure payment page
+                    window.location.replace(session_url); 
+                } else {
+                    toast.error(responseStripe.data.message);
+                }
+                break;
+
+            case 'razorpay':
+                // Razorpay logic usually involves a frontend pop-up handler
+                toast.info("Razorpay is coming soon!");
+                break;
+
+            default:
+                break;
         }
+
+    } catch (error) {
+        console.log(error);
+        toast.error(error.message);
     }
+}
 
     return (
         <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
@@ -112,10 +130,10 @@ const PlaceOrder = () => {
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
                             <img className='h-5 mx-4' src={assets.stripe_logo} alt="" />
                         </div>
-                        <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
+                        {/* <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' : ''}`}></p>
                             <img className='h-5 mx-4' src={assets.razorpay_logo} alt="" />
-                        </div>
+                        </div> */}
                         <div onClick={() => setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-gray-500 text-sm font-medium mx-4'>CASH ON DELIVERY</p>
